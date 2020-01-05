@@ -1,12 +1,22 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 
-function App() {
-  return (
-    <div className='App'>
-      
-    </div>
-  );
+class App extends React.Component {
+  handleTest = () => {
+    fetch("/api/users", {
+      method: "GET"
+    })
+      .then(response => response.json())
+      .then(response => console.log(response));
+  };
+  render() {
+    return (
+      <div className="App">
+        <button onClick={this.handleTest}>Тест</button>
+      </div>
+    );
+  }
 }
 
 export default App;
+  

@@ -1,12 +1,26 @@
-require('./db');
-const http = require("http");
+// require('./db');
+const express = require('express');
 
-let message = "Hello World!";
-http.createServer(function(request,response){
-     
-    console.log(message);
-    response.end(message);
-     
-}).listen(3001, "127.0.0.1",()=>{
-    console.log("Сервер начал прослушивание запросов");
+
+const app = express();
+
+app.listen(3001, () => {
+    console.log('We are live on ' + 3001);
 });
+
+app.get('/api/users', (request, response) => {
+    const users = [
+        {
+            name: 'Kirill'
+        },
+        {
+            name: 'Ruslan'
+        },
+        {
+            name: 'Denis'
+        }
+    ];
+    response.send(users);
+})
+
+   
