@@ -1,0 +1,9 @@
+{
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "disableLanguages": [],
+    "quoteProps": "preserve",
+    "singleQuote": true,
+    "printWidth": 120
+}
