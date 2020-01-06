@@ -46,6 +46,7 @@
     "eslint-plugin-react": "^7.17.0"
   },
   "crcf": [
-    "notest"
+    "notest",
+    "jsx"
   ]
 }

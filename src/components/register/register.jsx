@@ -17,14 +17,17 @@ const useStyles = makeStyles({
   input: {
     marginBottom: 12,
     width: '100%'
+  },
+  typo: {
+    marginBottom: 15,
   }
 });
 
-const Login = () =>{
-  const { input, form } = useStyles();
+const Register = () => {
+  const { input, form, typo } = useStyles();
   return (
-    <div className="login">
-      <Typography variant="h5">Авторизация</Typography>
+    <div className="register">
+      <Typography variant="h5" className={typo}>Регистрация</Typography>
       <form className={form}>
         <Grid
           container
@@ -33,8 +36,6 @@ const Login = () =>{
           alignItems="center"
           style={{ height: "100%" }}
         >
-          <TextField className={input} variant="outlined" label="Имя" />
-          <TextField className={input} variant="outlined" label="Фамилия" />
           <TextField className={input} variant="outlined" label="Почта" />
           <TextField
             className={input}
@@ -42,18 +43,12 @@ const Login = () =>{
             type="password"
             label="Пароль"
           />
-          <TextField
-            className={input}
-            variant="outlined"
-            type="password"
-            label="Повторите пароль"
-          />
-          <Button size="large" variant="outlined" className={input}>
-            Авторизироваться
+          <Button size="large" variant="outlined">
+            Зарегистрироваться
           </Button>
         </Grid>
       </form>
     </div>
   );
 }
-export default Login;
+export default Register;
