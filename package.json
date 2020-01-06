@@ -8,6 +8,7 @@
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
     "body-parser": "^1.19.0",
+    "create-react-component-folder": "^0.1.30",
     "express": "^4.17.1",
     "mongodb": "^3.4.1",
     "mongoose": "^5.8.4",
@@ -43,5 +44,8 @@
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0"
-  }
+  },
+  "crcf": [
+    "notest"
+  ]
 }
