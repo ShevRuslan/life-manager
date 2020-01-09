@@ -11,7 +11,6 @@ import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 
-                    <TextField className={input} variant="outlined" type="password" label="Пароль" />
 const Register = () => {
   const { input, form, typography, adjacentElement, register } = useStyles();
   const [showPassword, setShowPassword] = useState(false);
