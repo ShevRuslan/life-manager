@@ -5,10 +5,10 @@ export default makeStyles({
     width: "100%"
   },
   input: {
-    marginTop: 12,
-    width: '100%'
+    width: '100%',
+    marginTop: '15px !important'
   },
-  typo: {
+  typography: {
     marginBottom: 15,
   },
   adjacentElement: {
@@ -16,5 +16,16 @@ export default makeStyles({
   },
   grid: {
     height:'100%'
+  },
+  wrapperLink: {
+    width: '100%',
+    textAlign: 'left' 
+  },
+  link: {
+    color: '#000',
+    fontSize: 12,
+  },
+  register: {
+    width: '100%'
   }
 });
