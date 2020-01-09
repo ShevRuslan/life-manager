@@ -9,6 +9,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
+import BackgroundAnimation from '../backgroundAnimation';
 import './App.css';
 
 const useStyles = makeStyles({
@@ -16,7 +17,8 @@ const useStyles = makeStyles({
     minWidth: 800,
     textAlign: 'center',
     padding: 0,
-    height: 450
+    height: 450,
+    zIndex:'100'
   },
   cardContent: {
     padding: '0 !important',
@@ -44,11 +46,22 @@ const useStyles = makeStyles({
   },
   height: {
     height: '100%'
+  },
+  wrapperParticles: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0
+  },
+  layoutPartices: {
+    width: '100%',
+    height: '100%'
   }
 });
 
 const App = () => {
-  const { card, fragment, arrow, deg180, deg0, media, cardContent, content, height } = useStyles();
+  const { card, fragment, arrow, deg180, deg0, media, cardContent, content, height, wrapperParticles, layoutPartices } = useStyles();
   const [showAuth, setShowAuth] = useState(false);
   const [display, setDisplay] = useState('block');
   const [opacity, setOpacity] = useState(1);
@@ -61,30 +74,42 @@ const App = () => {
     setShowAuth(!showAuth);
     if (display == 'block') {
       setOpacity(0);
-      myRef.current.addEventListener('transitionend', () => {
-        setDisplay('none');
-        setDisplayElem('block');
-        setOpacityElem(0);
-        setTimeout(() => {
-          setOpacityElem(1);
-        }, 0);
-      }, { once: true });
-    }
-    else if (display == 'none') {
+      myRef.current.addEventListener(
+        'transitionend',
+        () => {
+          setDisplay('none');
+          setDisplayElem('block');
+          setOpacityElem(0);
+          setTimeout(() => {
+            setOpacityElem(1);
+          }, 0);
+        },
+        { once: true }
+      );
+    } else if (display == 'none') {
       setOpacityElem(0);
-      myRefElem.current.addEventListener('transitionend', () => {
-        setDisplayElem('none');
-        setDisplay('block');
-        setOpacity(0);
-        setTimeout(() => {
-          setOpacity(1);
-        }, 0);
-      }, { once: true });
+      myRefElem.current.addEventListener(
+        'transitionend',
+        () => {
+          setDisplayElem('none');
+          setDisplay('block');
+          setOpacity(0);
+          setTimeout(() => {
+            setOpacity(1);
+          }, 0);
+        },
+        { once: true }
+      );
     }
   };
 
   return (
     <Grid container justify="center" alignItems="center" className={height}>
+      <div className={wrapperParticles}>
+        <div className={layoutPartices}>
+          <BackgroundAnimation></BackgroundAnimation>
+        </div>
+      </div>
       <Card className={card} variant="outlined">
         <CardContent className={cardContent}>
           <Grid container direction="row-reverse" className={height} justify="space-between">
@@ -111,7 +136,7 @@ const App = () => {
                     style={{
                       transition: 'all .5s linear',
                       display: displayElem,
-                      opacity: opacityElem,
+                      opacity: opacityElem
                     }}
                     ref={myRefElem}
                   >
