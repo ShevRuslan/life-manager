@@ -12,13 +12,19 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+// import LifeManagerApiService from '../../services/api-service/';
 
 const Login = () => {
   const { input, form, typography, link, wrapperLink } = useStyles(); //Стили для элементов
   const [showPassword, setShowPassword] = useState(false); //Флаг, отвечающий за показ пароля
   const [errors, setErrors] = useState([]); //Массив ошибок
+  const [isPasswordValidate, setPasswordValidate] = useState(false);
   // eslint-disable-next-line no-unused-vars
-  const [visibleErrors, setVisibleErrors] = useState({email: undefined, password:undefined, repeatPassword:undefined});
+  const [visibleErrors, setVisibleErrors] = useState({
+    email: undefined,
+    password: undefined,
+    repeatPassword: undefined
+  });
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
   /**
    * Хранилище данных, для последующей авторизации
@@ -57,8 +63,12 @@ const Login = () => {
     }
   };
   const deleteError = (error, input) => {
-    setErrors(errors => errors.filter(item => item.content !== error && item.input !== input));
-    visibleErrors[input] = undefined;
+    const index = errors.findIndex(err => err.content == error && err.input == input);
+    if (index != -1) {
+      setErrors(errors => errors.filter(element => element.content != error && element.input != input));
+      const item = visibleErrors[input];
+      if (item == error) visibleErrors[input] = undefined;
+    }
   };
   const validate = () => {
     const { password, email, repeatPassword } = values;
@@ -80,14 +90,28 @@ const Login = () => {
     } else {
       deleteError('Введите email!', 'email');
     }
-
+    
+    validatePassword();
+  };
+  const validatePassword = () => {
+    const { password, repeatPassword } = values;
+    if (password.trim() != '' && repeatPassword.trim() != '') {
+      if (password != repeatPassword) {
+        addError('Пароли не совпадают!', 'checkPassword');
+        setPasswordValidate(true);
+      } else {
+        deleteError('Пароли не совпадают!', 'checkPassword');
+        setPasswordValidate(false);
+      }
+    }
     if (errors.lenght != 0) setOpen(true);
   };
   const onSubmit = () => {
     validate();
   };
   let viewError = null;
-  if (errors.length > 0) {
+  console.log(errors);
+  if (errors.length != 0) {
     viewError = (
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         {
@@ -121,13 +145,15 @@ const Login = () => {
             />
           </FormControl>
           <FormControl variant="outlined" className={input}>
-            <InputLabel htmlFor="outlined-adornment-password" error={visibleErrors.password ? true : false}>Пароль</InputLabel>
+            <InputLabel htmlFor="outlined-adornment-password" error={visibleErrors.password || isPasswordValidate ? true : false}>
+              Пароль
+            </InputLabel>
             <OutlinedInput
               id="outlined-adornment-password"
               type={showPassword ? 'text' : 'password'}
               value={values.password}
               onChange={handleChange('password')}
-              error={visibleErrors.password ? true : false}
+              error={visibleErrors.password || isPasswordValidate ? true : false}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
@@ -139,9 +165,14 @@ const Login = () => {
             />
           </FormControl>
           <FormControl variant="outlined" className={input}>
-            <InputLabel error={visibleErrors.repeatPassword ? true : false} htmlFor="outlined-adornment-repeat-repeat-password">Повторите пароль</InputLabel>
+            <InputLabel
+              error={visibleErrors.repeatPassword || isPasswordValidate ? true : false}
+              htmlFor="outlined-adornment-repeat-repeat-password"
+            >
+              Повторите пароль
+            </InputLabel>
             <OutlinedInput
-              error={visibleErrors.repeatPassword ? true : false}
+              error={visibleErrors.repeatPassword || isPasswordValidate ? true : false}
               id="outlined-adornment-repeat-repeat-password"
               type={showPassword ? 'text' : 'password'}
               value={values.repeatPassword}
