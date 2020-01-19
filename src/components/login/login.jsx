@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -12,148 +12,104 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
-// import LifeManagerApiService from '../../services/api-service/';
+import useForm from '../useForm/useForm';
+import validate from '../../utils/validate.js';
+import LifeManagerApiService from '../../services/';
 
 const Login = () => {
   const { input, form, typography, link, wrapperLink } = useStyles(); //Стили для элементов
   const [showPassword, setShowPassword] = useState(false); //Флаг, отвечающий за показ пароля
-  const [errors, setErrors] = useState([]); //Массив ошибок
-  const [isPasswordValidate, setPasswordValidate] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [visibleErrors, setVisibleErrors] = useState({
-    email: undefined,
-    password: undefined,
-    repeatPassword: undefined
-  });
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
-  /**
-   * Хранилище данных, для последующей авторизации
-   * @param  email
-   * @param  password
-   * @param  repeatPassword
-   */
-  const [values, setValues] = useState({
-    email: '',
-    password: '',
-    repeatPassword: ''
-  });
+  const { values, errors, handleChange, handleSubmit } = useForm(auth, validate);
 
-  const handleClose = (event, reason) => {
+  async function auth() {
+    const api = new LifeManagerApiService();
+    const data = JSON.stringify(values);
+    const res = await api.loginUser(data);
+    console.log(res);
+  }
+
+  const openViewError = useCallback(() => {
+    if (Object.keys(errors).length === 0) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  })
+  
+  useEffect(() => {
+    openViewError();
+  }, [errors, openViewError]);
+
+  const handleClose = reason => {
     if (reason === 'clickaway') {
       return;
     }
     setOpen(false);
   };
-  /** Функция, меняющая значение в хранилище данных по event
-   * @param  values
-   * @param  event
-   */
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  const addError = (error, input) => {
-    const index = errors.findIndex(err => err.input == input && err.content == error);
-    if (index == -1) {
-      visibleErrors[input] = error;
-      setErrors(old => [...old, { input: input, content: error }]);
-    }
-  };
-  const deleteError = (error, input) => {
-    const index = errors.findIndex(err => err.content == error && err.input == input);
-    if (index != -1) {
-      setErrors(errors => errors.filter(element => element.content != error && element.input != input));
-      const item = visibleErrors[input];
-      if (item == error) visibleErrors[input] = undefined;
-    }
-  };
-  const validate = () => {
-    const { password, email, repeatPassword } = values;
 
-    if (password.trim() == '') {
-      addError('Введите пароль!', 'password');
-    } else {
-      deleteError('Введите пароль!', 'password');
-    }
+  const refHandleChange = e => {
+    handleChange(e);
+    openViewError();
+  };
 
-    if (repeatPassword.trim() == '') {
-      addError('Введите повторный пароль!', 'repeatPassword');
-    } else {
-      deleteError('Введите повторный пароль!', 'repeatPassword');
+  const viewErrors = () => {
+    let viewError = null;
+    if (Object.keys(errors).length !== 0) {
+      viewError = (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          {
+            <Alert elevation={6} variant="filled" severity="error" onClose={handleClose}>
+              {Object.keys(errors).map((fieldName, key) => {
+                return <div key={key}>{errors[fieldName]}</div>;
+              })}
+            </Alert>
+          }
+        </Snackbar>
+      );
     }
+    return viewError;
+  };
 
-    if (email.trim() == '') {
-      addError('Введите email!', 'email');
-    } else {
-      deleteError('Введите email!', 'email');
-    }
-    
-    validatePassword();
-  };
-  const validatePassword = () => {
-    const { password, repeatPassword } = values;
-    if (password.trim() != '' && repeatPassword.trim() != '') {
-      if (password != repeatPassword) {
-        addError('Пароли не совпадают!', 'checkPassword');
-        setPasswordValidate(true);
-      } else {
-        deleteError('Пароли не совпадают!', 'checkPassword');
-        setPasswordValidate(false);
-      }
-    }
-    if (errors.lenght != 0) setOpen(true);
-  };
-  const onSubmit = () => {
-    validate();
-  };
-  let viewError = null;
-  console.log(errors);
-  if (errors.length != 0) {
-    viewError = (
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        {
-          <Alert elevation={6} variant="filled" severity="error" onClose={handleClose}>
-            {errors.map((err, key) => {
-              return <div key={key}>{err.content}</div>;
-            })}
-          </Alert>
-        }
-      </Snackbar>
-    );
-  }
   return (
     <div className="login">
-      {viewError}
+      {viewErrors()}
       <Typography variant="h5" className={typography}>
         Авторизация
       </Typography>
-      <form className={form}>
+      <form className={form} onSubmit={handleSubmit}>
         <Grid container direction="column" justify="center" alignItems="center">
           <FormControl variant="outlined" className={input}>
-            <InputLabel error={visibleErrors.email ? true : false} htmlFor="outlined-adornment-email">
+            <InputLabel htmlFor="outlined-adornment-email" error={errors.email ? true : false}>
               Почта
             </InputLabel>
             <OutlinedInput
-              error={visibleErrors.email ? true : false}
               id="outlined-adornment-email"
               value={values.email}
-              onChange={handleChange('email')}
+              name="email"
+              onChange={refHandleChange}
               labelWidth={70}
+              error={errors.email ? true : false}
             />
           </FormControl>
           <FormControl variant="outlined" className={input}>
-            <InputLabel htmlFor="outlined-adornment-password" error={visibleErrors.password || isPasswordValidate ? true : false}>
+            <InputLabel
+              htmlFor="outlined-adornment-password"
+              error={errors.password || errors.checkPassword ? true : false}
+            >
               Пароль
             </InputLabel>
             <OutlinedInput
               id="outlined-adornment-password"
               type={showPassword ? 'text' : 'password'}
               value={values.password}
-              onChange={handleChange('password')}
-              error={visibleErrors.password || isPasswordValidate ? true : false}
+              name="password"
+              onChange={refHandleChange}
+              error={errors.password || errors.checkPassword ? true : false}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
@@ -166,21 +122,22 @@ const Login = () => {
           </FormControl>
           <FormControl variant="outlined" className={input}>
             <InputLabel
-              error={visibleErrors.repeatPassword || isPasswordValidate ? true : false}
               htmlFor="outlined-adornment-repeat-repeat-password"
+              error={errors.repeatPassword || errors.checkPassword ? true : false}
             >
               Повторите пароль
             </InputLabel>
             <OutlinedInput
-              error={visibleErrors.repeatPassword || isPasswordValidate ? true : false}
               id="outlined-adornment-repeat-repeat-password"
               type={showPassword ? 'text' : 'password'}
               value={values.repeatPassword}
-              onChange={handleChange('repeatPassword')}
+              name="repeatPassword"
+              onChange={refHandleChange}
               labelWidth={140}
+              error={errors.repeatPassword || errors.checkPassword ? true : false}
             />
           </FormControl>
-          <Button size="large" variant="outlined" className={input} onClick={onSubmit}>
+          <Button size="large" variant="outlined" className={input} onClick={handleSubmit}>
             Авторизироваться
           </Button>
           <Typography className={wrapperLink}>
