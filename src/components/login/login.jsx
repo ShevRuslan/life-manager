@@ -13,8 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import useForm from '../useForm/useForm';
-import validate from '../../utils/validate.js';
 import LifeManagerApiService from '../../services/';
+import validate from '../../utils/validate';
 
 const Login = () => {
   const { input, form, typography, link, wrapperLink } = useStyles(); //Стили для элементов
@@ -22,6 +22,7 @@ const Login = () => {
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
   const { values, errors, handleChange, handleSubmit } = useForm(auth, validate);
 
+  //FIXME:Добавлять в redux-state
   async function auth() {
     const api = new LifeManagerApiService();
     const data = JSON.stringify(values);
@@ -29,19 +30,21 @@ const Login = () => {
     console.log(res);
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const openViewError = useCallback(() => {
     if (Object.keys(errors).length === 0) {
       setOpen(false);
     } else {
       setOpen(true);
     }
-  })
-  
+  });
+
   useEffect(() => {
     openViewError();
-  }, [errors, openViewError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errors]);
 
-  const handleClose = reason => {
+  const handleClose = (e, reason) => {
     if (reason === 'clickaway') {
       return;
     }
