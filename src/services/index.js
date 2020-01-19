@@ -20,11 +20,11 @@ export default class LifeManagerApiService {
 
   loginUser = async data => {
     const res = await this.getResource('/login', data, 'POST');
-    return res.json();
+    return res;
   };
 
   registerUser = async data => {
     const res = await this.getResource('/register', data, 'POST');
-    return res.json();
+    return res;
   };
 }
