@@ -29,7 +29,7 @@ const validate = values => {
   return errors;
 };
 
-const hocRegister = View => props => {
+const useRegisterLogic = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
   const { values, errors, handleChange, handleSubmit } = useForm(reg, validate);
@@ -89,17 +89,14 @@ const hocRegister = View => props => {
     return viewError;
   };
 
-  return (
-    <View
-      viewErrors={viewErrors}
-      errors={errors}
-      values={values}
-      refHandleChange={refHandleChange}
-      handleClickShowPassword={handleClickShowPassword}
-      showPassword={showPassword}
-      handleSubmit={handleSubmit}
-      {...props}
-    />
-  );
+  return {
+    viewErrors,
+    errors,
+    values,
+    refHandleChange,
+    handleClickShowPassword,
+    showPassword,
+    handleSubmit
+  };
 };
-export default hocRegister;
+export default useRegisterLogic;

@@ -10,10 +10,19 @@ import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import RegisterLogic from './RegisterLogic';
+import useRegisterLogic from './RegisterLogic';
 
-const RegisterUI = ({viewErrors, errors, values, refHandleChange, handleClickShowPassword, showPassword, handleSubmit }) => {
+const RegisterUI = () => {
   const { input, form, typography, adjacentElement, register } = useStyles();
+  const {
+    viewErrors,
+    errors,
+    values,
+    refHandleChange,
+    handleClickShowPassword,
+    showPassword,
+    handleSubmit
+  } = useRegisterLogic();
   return (
     <div className={register}>
       {viewErrors()}
@@ -92,4 +101,4 @@ const RegisterUI = ({viewErrors, errors, values, refHandleChange, handleClickSho
     </div>
   );
 };
-export default RegisterLogic(RegisterUI);
+export default RegisterUI;
