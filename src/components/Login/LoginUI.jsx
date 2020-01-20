@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -10,74 +10,19 @@ import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import Alert from '@material-ui/lab/Alert';
-import Snackbar from '@material-ui/core/Snackbar';
-import useForm from '../useForm/useForm';
-import LifeManagerApiService from '../../services/';
-import validate from '../../utils/validate';
+import useLoginLogic from './LoginLogic';
 
-const Login = () => {
+const LoginUI = () => {
   const { input, form, typography, link, wrapperLink } = useStyles(); //Стили для элементов
-  const [showPassword, setShowPassword] = useState(false); //Флаг, отвечающий за показ пароля
-  const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
-  const { values, errors, handleChange, handleSubmit } = useForm(auth, validate);
-
-  //FIXME:Добавлять в redux-state
-  async function auth() {
-    const api = new LifeManagerApiService();
-    const data = JSON.stringify(values);
-    const res = await api.loginUser(data);
-    console.log(res);
-  }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const openViewError = useCallback(() => {
-    if (Object.keys(errors).length === 0) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  });
-
-  useEffect(() => {
-    openViewError();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errors]);
-
-  const handleClose = (e, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const refHandleChange = e => {
-    handleChange(e);
-    openViewError();
-  };
-
-  const viewErrors = () => {
-    let viewError = null;
-    if (Object.keys(errors).length !== 0) {
-      viewError = (
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          {
-            <Alert elevation={6} variant="filled" severity="error" onClose={handleClose}>
-              {Object.keys(errors).map((fieldName, key) => {
-                return <div key={key}>{errors[fieldName]}</div>;
-              })}
-            </Alert>
-          }
-        </Snackbar>
-      );
-    }
-    return viewError;
-  };
-
+  const {
+    viewErrors,
+    errors,
+    values,
+    refHandleChange,
+    handleClickShowPassword,
+    showPassword,
+    handleSubmit
+  } = useLoginLogic();
   return (
     <div className="login">
       {viewErrors()}
@@ -153,4 +98,4 @@ const Login = () => {
     </div>
   );
 };
-export default Login;
+export default LoginUI;
