@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
+import { green } from '@material-ui/core/colors';
 
 export default makeStyles({
   form: {
@@ -27,5 +28,22 @@ export default makeStyles({
   },
   register: {
     width: '100%'
-  }
+  },
+  wrapper: {
+    width: '100%',
+    marginTop: '15px',
+    position: 'relative',
+  },
+  buttonProgress: {
+    color: green[500],
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
+  buttomSubmit: {
+    width: '100%'
+  },
+
 });
