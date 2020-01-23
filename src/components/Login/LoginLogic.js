@@ -17,8 +17,9 @@ const useLoginLogic = () => {
     if (!isAuth) {
       const api = new LifeManagerApiService();
       const data = JSON.stringify(values);
-      const res = await api.loginUser(data);
-      console.log(res);
+      const { token, refreshToken } = await api.loginUser(data);
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
       setAuth(true);
     }
   }

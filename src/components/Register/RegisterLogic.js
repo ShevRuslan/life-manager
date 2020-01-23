@@ -41,9 +41,10 @@ const useRegisterLogic = () => {
     if (!isRegister) {
       const api = new LifeManagerApiService();
       const data = JSON.stringify(values);
-      const res = await api.registerUser(data);
+      const { token, refreshToken }  = await api.registerUser(data);
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
       setRegister(true);
-      console.log(res);
     }
   }
   useEffect(() => {
