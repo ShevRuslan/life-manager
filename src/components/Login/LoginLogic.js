@@ -8,17 +8,21 @@ import validate from '../../utils/validate';
 const useLoginLogic = () => {
   const [showPassword, setShowPassword] = useState(false); //Флаг, отвечающий за показ пароля
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
-  const { values, errors, handleChange, handleSubmit } = useForm(auth, validate);
+  const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(auth, validate);
+  const [isAuth, setAuth] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  //FIXME:Добавлять в redux-state
+  //TODO:Добавлять в redux-state и перенаправлять на dashboard
   async function auth() {
-    const api = new LifeManagerApiService();
-    const data = JSON.stringify(values);
-    const res = await api.loginUser(data);
-    console.log(res);
+    if (!isAuth) {
+      const api = new LifeManagerApiService();
+      const data = JSON.stringify(values);
+      const res = await api.loginUser(data);
+      console.log(res);
+      setAuth(true);
+    }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const openViewError = useCallback(() => {
     if (Object.keys(errors).length === 0) {
       setOpen(false);
@@ -28,8 +32,14 @@ const useLoginLogic = () => {
   });
 
   useEffect(() => {
+    if (isAuth) setLoading(false);
+  }, [isAuth]);
+
+  useEffect(() => {
     openViewError();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (Object.keys(errors).length === 0 && isSubmitting && !isAuth) {
+      setLoading(true);
+    }
   }, [errors]);
 
   const handleClose = (e, reason) => {
@@ -46,6 +56,10 @@ const useLoginLogic = () => {
   const refHandleChange = e => {
     handleChange(e);
     openViewError();
+  };
+
+  const refHandleSubmit = e => {
+    handleSubmit(e);
   };
 
   const viewErrors = () => {
@@ -73,7 +87,8 @@ const useLoginLogic = () => {
     refHandleChange,
     handleClickShowPassword,
     showPassword,
-    handleSubmit
+    refHandleSubmit,
+    loading
   };
 };
 export default useLoginLogic;

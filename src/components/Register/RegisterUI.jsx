@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import useStyles from '../styles/log-reg/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
@@ -13,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import useRegisterLogic from './RegisterLogic';
 
 const RegisterUI = () => {
-  const { input, form, typography, adjacentElement, register } = useStyles();
+  const { input, form, typography, adjacentElement, register, wrapper, buttonProgress, buttomSubmit } = useStyles();
   const {
     viewErrors,
     errors,
@@ -21,7 +22,8 @@ const RegisterUI = () => {
     refHandleChange,
     handleClickShowPassword,
     showPassword,
-    handleSubmit
+    handleSubmit,
+    loading
   } = useRegisterLogic();
   return (
     <div className={register}>
@@ -93,9 +95,12 @@ const RegisterUI = () => {
               labelWidth={70}
             />
           </FormControl>
-          <Button className={input} size="large" variant="outlined" onClick={handleSubmit}>
-            Зарегистрироваться
-          </Button>
+          <div className={wrapper}>
+            <Button className={buttomSubmit} disabled={loading} size="large" variant="outlined" onClick={handleSubmit}>
+              Зарегистрироваться
+            </Button>
+            {loading && <CircularProgress color="inherit" size={24} className={buttonProgress} />}
+          </div>
         </Grid>
       </form>
     </div>

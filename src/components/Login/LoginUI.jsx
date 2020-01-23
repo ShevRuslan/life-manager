@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import useStyles from '../styles/log-reg/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControl from '@material-ui/core/FormControl';
@@ -13,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import useLoginLogic from './LoginLogic';
 
 const LoginUI = () => {
-  const { input, form, typography, link, wrapperLink } = useStyles(); //Стили для элементов
+  const { input, form, typography, link, wrapperLink, wrapper, buttonProgress, buttomSubmit } = useStyles(); //Стили для элементов
   const {
     viewErrors,
     errors,
@@ -21,15 +22,17 @@ const LoginUI = () => {
     refHandleChange,
     handleClickShowPassword,
     showPassword,
-    handleSubmit
+    refHandleSubmit,
+    loading,
   } = useLoginLogic();
+
   return (
     <div className="login">
       {viewErrors()}
       <Typography variant="h5" className={typography}>
         Авторизация
       </Typography>
-      <form className={form} onSubmit={handleSubmit}>
+      <form className={form}>
         <Grid container direction="column" justify="center" alignItems="center">
           <FormControl variant="outlined" className={input}>
             <InputLabel htmlFor="outlined-adornment-email" error={errors.email ? true : false}>
@@ -85,9 +88,12 @@ const LoginUI = () => {
               error={errors.repeatPassword || errors.checkPassword ? true : false}
             />
           </FormControl>
-          <Button size="large" variant="outlined" className={input} onClick={handleSubmit}>
-            Авторизироваться
-          </Button>
+          <div className={wrapper}>
+            <Button size="large" disabled={loading} className={buttomSubmit} variant="outlined" onClick={refHandleSubmit}>
+              Авторизироваться
+            </Button>
+            {loading && <CircularProgress color="inherit" size={24} className={buttonProgress} />}
+          </div>
           <Typography className={wrapperLink}>
             <a className={link} href="#">
               Восстановить пароль.

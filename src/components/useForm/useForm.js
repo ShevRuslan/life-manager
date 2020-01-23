@@ -5,12 +5,18 @@ const useForm = (callback, validate) => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
-
+  const [submit, setSubmit] = useState(false)
   useEffect(() => {
-    if (Object.keys(errors).length === 0 && isSubmitting) {
+    if (Object.keys(errors).length === 0 && isSubmitting && !submit) {
       callback();
+      setSubmit(true)
     }
-  }, [callback, errors, isSubmitting]);
+    
+    if (Object.keys(errors).length !== 0 && !isSubmitting && submit) {
+      setSubmit(false);
+    }
+
+  }, [callback, errors, isSubmitting, submit]);
 
   const handleSubmit = event => {
     if (event) event.preventDefault();
@@ -18,7 +24,6 @@ const useForm = (callback, validate) => {
     setIsSubmitting(true);
     setIsSent(true);
   };
-
   const handleChange = event => {
     event.persist && event.persist();
     setIsSubmitting(false);
@@ -31,7 +36,8 @@ const useForm = (callback, validate) => {
     handleChange,
     handleSubmit,
     values,
-    errors
+    errors,
+    isSubmitting
   };
 };
 

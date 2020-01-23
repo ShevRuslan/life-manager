@@ -32,16 +32,29 @@ const validate = values => {
 const useRegisterLogic = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
-  const { values, errors, handleChange, handleSubmit } = useForm(reg, validate);
+  const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(reg, validate);
+  const [isRegister, setRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  //FIXME:Добавлять в redux-state
+  //TODO:Добавлять в redux-state и перенаправлять на dashboard
   async function reg() {
-    const api = new LifeManagerApiService();
-    const data = JSON.stringify(values);
-    const res = await api.registerUser(data);
-    console.log(res);
+    if (!isRegister) {
+      const api = new LifeManagerApiService();
+      const data = JSON.stringify(values);
+      const res = await api.registerUser(data);
+      setRegister(true);
+      console.log(res);
+    }
   }
-
+  useEffect(() => {
+    if (isRegister) setLoading(false);
+  }, [isRegister]);
+  useEffect(() => {
+    openViewError();
+    if (Object.keys(errors).length === 0 && isSubmitting && !isRegister) {
+      setLoading(true);
+    }
+  }, [errors]);
   const openViewError = useCallback(() => {
     if (Object.keys(errors).length === 0) {
       setOpen(false);
@@ -96,7 +109,8 @@ const useRegisterLogic = () => {
     refHandleChange,
     handleClickShowPassword,
     showPassword,
-    handleSubmit
+    handleSubmit,
+    loading
   };
 };
 export default useRegisterLogic;
