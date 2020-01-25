@@ -3,6 +3,8 @@ import useForm from '../useForm/useForm';
 import LifeManagerApiService from '../../services';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import { accountReg } from '../../actions/index';
+import { useDispatch } from 'react-redux';
 
 const validate = values => {
   let errors = {};
@@ -30,13 +32,14 @@ const validate = values => {
 };
 
 const useRegisterLogic = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-  const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
+  const [open, setOpen] = useState(false);
   const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(reg, validate);
   const [isRegister, setRegister] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  //TODO:Добавлять в redux-state и перенаправлять на dashboard
+  //TODO:Перенаправлять на dashboard
   async function reg() {
     if (!isRegister) {
       const api = new LifeManagerApiService();
@@ -44,6 +47,7 @@ const useRegisterLogic = () => {
       const { token, refreshToken }  = await api.registerUser(data);
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
+      dispatch(accountReg(token, refreshToken));
       setRegister(true);
     }
   }

@@ -4,15 +4,18 @@ import LifeManagerApiService from '../../services';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import validate from '../../utils/validate';
+import { accountAuth } from '../../actions/index';
+import { useDispatch } from 'react-redux';
 
 const useLoginLogic = () => {
-  const [showPassword, setShowPassword] = useState(false); //Флаг, отвечающий за показ пароля
-  const [open, setOpen] = useState(false); //Флаг, отвечающий за показ Snackbar
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+  const [open, setOpen] = useState(false);
   const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(auth, validate);
   const [isAuth, setAuth] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  //TODO:Добавлять в redux-state и перенаправлять на dashboard
+  //TODO:Перенаправлять на dashboard
   async function auth() {
     if (!isAuth) {
       const api = new LifeManagerApiService();
@@ -20,6 +23,7 @@ const useLoginLogic = () => {
       const { token, refreshToken } = await api.loginUser(data);
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
+      dispatch(accountAuth(token, refreshToken));
       setAuth(true);
     }
   }
@@ -92,4 +96,5 @@ const useLoginLogic = () => {
     loading
   };
 };
+
 export default useLoginLogic;
