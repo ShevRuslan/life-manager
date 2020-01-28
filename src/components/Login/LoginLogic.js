@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from '../useForm/useForm';
 import LifeManagerApiService from '../../services';
-import Alert from '@material-ui/lab/Alert';
-import Snackbar from '@material-ui/core/Snackbar';
 import validate from '../../utils/validate';
 import { accountAuth } from '../../actions/index';
 import { useDispatch } from 'react-redux';
+import useViewErros from '../ViewErrors';
 
 const useLoginLogic = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
-  const [open, setOpen] = useState(false);
   const { values, errors, isSubmitting, handleChange, handleSubmit } = useForm(auth, validate);
+  const { viewErrors, openViewError } = useViewErros(errors);
   const [isAuth, setAuth] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,14 +27,6 @@ const useLoginLogic = () => {
     }
   }
 
-  const openViewError = useCallback(() => {
-    if (Object.keys(errors).length === 0) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  });
-
   useEffect(() => {
     if (isAuth) setLoading(false);
   }, [isAuth]);
@@ -47,12 +38,6 @@ const useLoginLogic = () => {
     }
   }, [errors]);
 
-  const handleClose = (e, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -65,24 +50,6 @@ const useLoginLogic = () => {
 
   const refHandleSubmit = e => {
     handleSubmit(e);
-  };
-
-  const viewErrors = () => {
-    let viewError = null;
-    if (Object.keys(errors).length !== 0) {
-      viewError = (
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          {
-            <Alert elevation={6} variant="filled" severity="error" onClose={handleClose}>
-              {Object.keys(errors).map((fieldName, key) => {
-                return <div key={key}>{errors[fieldName]}</div>;
-              })}
-            </Alert>
-          }
-        </Snackbar>
-      );
-    }
-    return viewError;
   };
 
   return {
